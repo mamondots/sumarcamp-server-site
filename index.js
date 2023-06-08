@@ -29,9 +29,15 @@ async function run() {
 
 
     const classesCollection = client.db('SummerCamp').collection('Classes')
+    const instructorCollection = client.db('SummerCamp').collection('Instructors')
 
     app.get('/classes', async(req, res) =>{
         const result = await classesCollection.find().toArray()
+        res.send(result)
+    })
+
+    app.get('/instructors', async(req, res) =>{
+        const result = await instructorCollection.find().toArray()
         res.send(result)
     })
 
