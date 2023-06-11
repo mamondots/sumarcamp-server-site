@@ -33,6 +33,7 @@ async function run() {
     const classesCollection = client.db('SummerCamp').collection('Classes')
     const seletedCollection = client.db('SummerCamp').collection('seleted')
     const instructorCollection = client.db('SummerCamp').collection('Instructors')
+    const feedbacksCollection = client.db('SummerCamp').collection('feedbacks')
 
 
     //for user
@@ -63,7 +64,7 @@ async function run() {
         },
       }
       const result = await usersCollection.updateOne(filter,updateDoc)
-      res.send(result)
+     res.send(result)
     })
 
     app.patch('/users/instructor/:id', async (req, res) => {
@@ -138,6 +139,30 @@ async function run() {
       const result = await classesCollection.updateOne(filter,updateDoc)
       res.send(result)
     })
+
+
+
+   
+
+   //feedback
+
+   app.get('/feedbacks', async (req, res) => {
+    const result = await feedbacksCollection.find().toArray()
+    res.send(result)
+  })
+
+   app.post('/feedbacks', async (req, res) => {
+    const feedback = req.body
+    const result = await feedbacksCollection.insertOne(feedback)
+    res.send(result)
+  })
+
+  app.get('/feedbacks/:id', async (req, res) => {
+    const id = req.params.id
+    const query = { _id: new ObjectId(id) }
+    const result = await feedbacksCollection.findOne(query)
+    res.send(result)
+  })
 
     //seletedclasses
 
