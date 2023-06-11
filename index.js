@@ -115,6 +115,30 @@ async function run() {
       res.send(result)
     })
 
+    app.patch('/classes/Approve/:id', async (req, res) => {
+      const id = req.params.id
+      const filter = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set: {
+          status: 'Approveed'
+        },
+      }
+      const result = await classesCollection.updateOne(filter,updateDoc)
+      res.send(result)
+    })
+
+    app.patch('/classes/delay/:id', async (req, res) => {
+      const id = req.params.id
+      const filter = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set: {
+          status: 'denied'
+        },
+      }
+      const result = await classesCollection.updateOne(filter,updateDoc)
+      res.send(result)
+    })
+
     //seletedclasses
 
     app.get('/seleted', async (req, res) => {
