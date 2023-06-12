@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+var jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { send } = require('express/lib/response');
 require('dotenv').config()
@@ -11,6 +12,21 @@ app.use(cors())
 app.use(express.json())
 
 
+const verifyJWT = (req,res,next) =>{
+  const authorization = req.headers.authorization
+  if(!authorization){
+    return res.status(401).send({error:true, message:'unauthorized access'})
+  }
+  const token = authorization.split(' ')[1]
+
+  jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err, decoded)=>{
+    if(err){
+      return res.status(401).send({error:true, message:'unauthorized access'})
+    }
+    req.decoded = decoded
+    next()
+  })
+}
 
 
 const uri = `mongodb+srv://${process.env.BD_USER}:${process.env.BD_PASSWORD}@cluster0.i6scrno.mongodb.net/?retryWrites=true&w=majority`;
@@ -35,6 +51,18 @@ async function run() {
     const seletedCollection = client.db('SummerCamp').collection('seleted')
     const instructorCollection = client.db('SummerCamp').collection('Instructors')
     const feedbacksCollection = client.db('SummerCamp').collection('feedbacks')
+
+
+
+    //JWT
+
+    app.post('/jwt', (req,res) =>{
+      const user = req.body
+      const token = jwt.sign(user,process.env.ACCESS_TOKEN_SECRET,{
+        expiresIn:'1h'
+      })
+      res.send({ token })
+    })
 
 
     //for user
